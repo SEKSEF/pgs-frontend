@@ -1,8 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Router, RouterLink, NavigationEnd } from '@angular/router';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, SlicePipe } from '@angular/common';
-import { finalize, filter } from 'rxjs';
+import { finalize, Observable, Subscription } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { OfferService } from '../../../core/services/offer.service';
 import { OfferResponse } from '../../../core/models/offer.models';
 
@@ -19,14 +20,14 @@ import { OfferResponse } from '../../../core/models/offer.models';
   imports: [
     RouterLink, FormsModule, DatePipe, SlicePipe,
     MatCardModule, MatButtonModule, MatChipsModule,
-    MatIconModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule
+    MatIconModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule, MatTooltipModule
   ],
   templateUrl: './offer-list.component.html',
   styleUrl: './offer-list.component.scss'
 })
-export class OfferListComponent implements OnInit {
+export class OfferListComponent implements OnInit, OnDestroy {
   private offerService = inject(OfferService);
-  private router = inject(Router);
+  private sub = new Subscription();
 
   offers: OfferResponse[] = [];
   filtered: OfferResponse[] = [];
@@ -36,32 +37,34 @@ export class OfferListComponent implements OnInit {
   skeletonCards = Array.from({ length: 6 });
 
   ngOnInit() {
-    this.offerService.getAll().pipe(finalize(() => this.loading = false)).subscribe({
-      next: (offers) => {
-        this.offers = offers;
-        this.filtered = offers;
-      },
-      error: (err) => {
-        this.error = err.message || 'Failed to load offers';
-      }
-    });
+    this.fetch(this.offerService.getAll());
+  }
 
-    // Refresh when user clicks "Browse Offers" while already on this page
-    this.router.events.pipe(
-      filter(e => e instanceof NavigationEnd && e.urlAfterRedirects === '/offers')
-    ).subscribe(() => {
-      this.loading = true;
-      this.offerService.refreshAll().pipe(finalize(() => this.loading = false)).subscribe({
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
+
+  refreshOffers() {
+    this.sub.unsubscribe();
+    this.sub = new Subscription();
+    this.error = '';
+    this.searchQuery = '';
+    this.loading = true;
+    this.fetch(this.offerService.refreshAll());
+  }
+
+  private fetch(source: Observable<OfferResponse[]>) {
+    this.sub.add(
+      source.pipe(finalize(() => this.loading = false)).subscribe({
         next: (offers) => {
           this.offers = offers;
           this.filtered = offers;
-          this.searchQuery = '';
         },
         error: (err) => {
           this.error = err.message || 'Failed to load offers';
         }
-      });
-    });
+      })
+    );
   }
 
   filter() {

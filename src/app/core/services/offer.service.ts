@@ -24,6 +24,7 @@ export class OfferService {
 
   refreshAll(): Observable<OfferResponse[]> {
     this.cachedOffers = null;
+    this.api.invalidateCache(this.base);
     return this.api.get<OfferResponse[]>(this.base).pipe(
       tap(offers => this.cachedOffers = offers)
     );

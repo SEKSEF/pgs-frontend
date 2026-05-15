@@ -1,3 +1,9 @@
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .search-field {
   width: min(380px, 100%);
 }
