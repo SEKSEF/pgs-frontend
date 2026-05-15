@@ -1,47 +1,82 @@
 <div class="page-header">
-  <h1>My Internships</h1>
+  <div class="page-header-left">
+    <h1>My Internships</h1>
+    @if (!loading) {
+      <p class="page-count">{{ internships.length }} {{ internships.length === 1 ? 'internship' : 'internships' }}</p>
+    }
+  </div>
 </div>
 
 @if (loading) {
-  <div class="spinner-container"><mat-spinner /></div>
+  <div class="list-skeleton" aria-label="Loading internships…">
+    @for (_ of [1,2]; track $index) {
+      <div class="skeleton-item">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1">
+            <div class="skeleton skeleton-text-medium"></div>
+            <div class="skeleton skeleton-text-short" style="margin-top:6px"></div>
+          </div>
+          <div class="skeleton" style="width:80px;height:22px;border-radius:var(--radius-full)"></div>
+        </div>
+        <div style="display:flex;gap:var(--space-4);margin-top:var(--space-4)">
+          <div class="skeleton skeleton-text-short"></div>
+          <div class="skeleton skeleton-text-short"></div>
+        </div>
+      </div>
+    }
+  </div>
 } @else if (error) {
-  <div class="error-banner">{{ error }}</div>
+  <div class="error-banner" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    {{ error }}
+  </div>
 } @else if (internships.length === 0) {
   <div class="empty-state">
-    <mat-icon>business_center</mat-icon>
-    <p>No internships assigned yet</p>
+    <mat-icon aria-hidden="true">business_center</mat-icon>
+    <p class="empty-title">No internships yet</p>
+    <p class="empty-description">Once your application is accepted, your internship will appear here.</p>
   </div>
 } @else {
-  <div class="internships-list">
+  <div class="item-list">
     @for (i of internships; track i.id) {
-      <mat-card appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>{{ i.offerTitle }}</mat-card-title>
-          <mat-card-subtitle>{{ i.companyName }}</mat-card-subtitle>
-          <div class="status-badge">
-            <span [class]="'status-chip ' + i.status">{{ i.status }}</span>
+      <div class="item-card">
+        <div class="item-card-main">
+          <div class="item-card-header">
+            <div class="item-card-title-group">
+              <div class="company-avatar" aria-hidden="true">{{ i.companyName.charAt(0) }}</div>
+              <div>
+                <p class="item-title">{{ i.offerTitle }}</p>
+                <p class="item-subtitle">{{ i.companyName }}</p>
+              </div>
+            </div>
+            <span [class]="'status-chip ' + i.status" [attr.aria-label]="'Status: ' + i.status">
+              {{ i.status }}
+            </span>
           </div>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="info-row">
+
+          <div class="item-meta">
             @if (i.supervisorName) {
-              <span><mat-icon>supervisor_account</mat-icon> {{ i.supervisorName }}</span>
+              <span class="meta-item">
+                <mat-icon aria-hidden="true">supervisor_account</mat-icon>
+                {{ i.supervisorName }}
+              </span>
             }
             @if (i.startDate) {
-              <span><mat-icon>event</mat-icon> {{ i.startDate | date:'mediumDate' }}
-                @if (i.endDate) { – {{ i.endDate | date:'mediumDate' }} }
+              <span class="meta-item">
+                <mat-icon aria-hidden="true">event</mat-icon>
+                {{ i.startDate | date:'MMM d, y' }}{{ i.endDate ? ' – ' + (i.endDate | date:'MMM d, y') : '' }}
               </span>
             }
           </div>
+
           @if (i.supervisorNotes) {
-            <mat-divider />
-            <div class="notes">
-              <strong>Supervisor Notes:</strong>
-              <p>{{ i.supervisorNotes }}</p>
+            <div class="notes-section">
+              <p class="notes-label">Supervisor Notes</p>
+              <p class="notes-body">{{ i.supervisorNotes }}</p>
             </div>
           }
-        </mat-card-content>
-      </mat-card>
+        </div>
+      </div>
     }
   </div>
 }

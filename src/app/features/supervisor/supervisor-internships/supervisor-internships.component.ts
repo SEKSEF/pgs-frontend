@@ -2,15 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDividerModule } from '@angular/material/divider';
 import { InternshipService } from '../../../core/services/internship.service';
 import { InternshipResponse, InternshipStatus } from '../../../core/models/internship.models';
 
@@ -19,9 +13,7 @@ import { InternshipResponse, InternshipStatus } from '../../../core/models/inter
   standalone: true,
   imports: [
     DatePipe, FormsModule,
-    MatCardModule, MatButtonModule, MatIconModule,
-    MatProgressSpinnerModule, MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatDividerModule
+    MatIconModule, MatProgressSpinnerModule
   ],
   templateUrl: './supervisor-internships.component.html',
   styleUrl: './supervisor-internships.component.scss'

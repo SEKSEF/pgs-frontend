@@ -1,109 +1,192 @@
-<button mat-button routerLink="/offers" class="back-btn">
-  <mat-icon>arrow_back</mat-icon> Back to Offers
-</button>
+<a class="back-link" routerLink="/offers">
+  <mat-icon aria-hidden="true">arrow_back</mat-icon>
+  Back to Offers
+</a>
 
 @if (loading) {
-  <div class="spinner-container"><mat-spinner /></div>
+  <div class="detail-skeleton">
+    <div class="skeleton-main">
+      <div class="skeleton skeleton-heading"></div>
+      <div class="skeleton skeleton-text-medium" style="margin-top: var(--space-2)"></div>
+      <div class="skeleton-tags" style="margin-top: var(--space-5)">
+        <div class="skeleton" style="width:80px;height:26px;border-radius:var(--radius-full)"></div>
+        <div class="skeleton" style="width:100px;height:26px;border-radius:var(--radius-full)"></div>
+        <div class="skeleton" style="width:90px;height:26px;border-radius:var(--radius-full)"></div>
+      </div>
+      <div class="skeleton skeleton-text" style="margin-top: var(--space-7)"></div>
+      <div class="skeleton skeleton-text-wide" style="margin-top: var(--space-2)"></div>
+      <div class="skeleton skeleton-text-medium" style="margin-top: var(--space-2)"></div>
+      <div class="skeleton skeleton-text" style="margin-top: var(--space-2)"></div>
+    </div>
+    <div class="skeleton-sidebar">
+      <div class="skeleton skeleton-card"></div>
+    </div>
+  </div>
 } @else if (error) {
-  <div class="error-banner">{{ error }}</div>
+  <div class="error-banner" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    {{ error }}
+  </div>
 } @else if (offer) {
   <div class="detail-layout">
-    <div class="main-content">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title class="offer-title">{{ offer.title }}</mat-card-title>
-          <mat-card-subtitle>
-            <mat-icon inline>business</mat-icon> {{ offer.companyName }}
-          </mat-card-subtitle>
-        </mat-card-header>
 
-        <mat-card-content>
-          <mat-chip-set>
-            <mat-chip [class]="'status-chip ' + offer.status">{{ offer.status }}</mat-chip>
-            @if (offer.domain) { <mat-chip>{{ offer.domain }}</mat-chip> }
-            @if (offer.location) {
-              <mat-chip><mat-icon matChipAvatar>location_on</mat-icon>{{ offer.location }}</mat-chip>
-            }
-            @if (offer.durationMonths) {
-              <mat-chip>{{ offer.durationMonths }} months</mat-chip>
-            }
-          </mat-chip-set>
+    <!-- ── Main content ──────────────────────────────────── -->
+    <main class="detail-main">
 
-          <mat-divider />
-
-          <div class="info-grid">
-            <div class="info-item">
-              <mat-icon>event</mat-icon>
-              <div>
-                <div class="label">Start Date</div>
-                <div>{{ offer.startDate | date:'longDate' }}</div>
-              </div>
-            </div>
-            <div class="info-item">
-              <mat-icon>event_busy</mat-icon>
-              <div>
-                <div class="label">End Date</div>
-                <div>{{ offer.endDate | date:'longDate' }}</div>
-              </div>
-            </div>
+      <!-- Header -->
+      <div class="offer-header">
+        <div class="offer-header-top">
+          <div class="company-avatar" aria-hidden="true">
+            {{ offer.companyName.charAt(0) }}
           </div>
+          <div class="offer-meta">
+            <p class="offer-company">{{ offer.companyName }}</p>
+            <h1 class="offer-title">{{ offer.title }}</h1>
+          </div>
+        </div>
 
-          <h3>Description</h3>
-          <p class="description">{{ offer.description }}</p>
-
-          @if (offer.requiredSkills) {
-            <h3>Required Skills</h3>
-            <p>{{ offer.requiredSkills }}</p>
+        <div class="offer-tags">
+          <span [class]="'status-chip ' + offer.status">{{ offer.status }}</span>
+          @if (offer.domain) {
+            <span class="tag">
+              <mat-icon aria-hidden="true">category</mat-icon>{{ offer.domain }}
+            </span>
           }
-        </mat-card-content>
-      </mat-card>
-    </div>
+          @if (offer.location) {
+            <span class="tag">
+              <mat-icon aria-hidden="true">location_on</mat-icon>{{ offer.location }}
+            </span>
+          }
+          @if (offer.durationMonths) {
+            <span class="tag">
+              <mat-icon aria-hidden="true">schedule</mat-icon>{{ offer.durationMonths }} months
+            </span>
+          }
+        </div>
+      </div>
 
-    <div class="sidebar">
-      @if (offer.status === 'ACTIVE') {
-        @if (!isLoggedIn) {
-          <mat-card>
-            <mat-card-content>
-              <p>You need to be logged in as a student to apply.</p>
-              <a mat-flat-button routerLink="/login">Login to Apply</a>
-            </mat-card-content>
-          </mat-card>
-        } @else if (isStudent) {
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>Apply Now</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              @if (applied) {
-                <div class="applied-badge">
-                  <mat-icon>check_circle</mat-icon>
-                  <span>Application submitted!</span>
-                </div>
-              } @else {
-                <form [formGroup]="coverLetterForm" (ngSubmit)="apply()">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Cover Letter (optional)</mat-label>
-                    <textarea matInput formControlName="coverLetter" rows="5"
-                              placeholder="Tell the company why you're a good fit..."></textarea>
-                  </mat-form-field>
-                  <button mat-flat-button type="submit" [disabled]="applying" class="full-width">
-                    @if (applying) { <mat-spinner diameter="20" /> } @else { Submit Application }
-                  </button>
-                </form>
-              }
-            </mat-card-content>
-          </mat-card>
-        }
-      } @else {
-        <mat-card>
-          <mat-card-content>
-            <p class="closed-note">
-              <mat-icon>lock</mat-icon>
-              This offer is no longer accepting applications.
-            </p>
-          </mat-card-content>
-        </mat-card>
+      <!-- Dates row -->
+      <div class="dates-row">
+        <div class="date-item">
+          <span class="date-label">Start Date</span>
+          <span class="date-value">{{ offer.startDate | date:'MMMM d, y' }}</span>
+        </div>
+        <div class="date-divider" aria-hidden="true"></div>
+        <div class="date-item">
+          <span class="date-label">End Date</span>
+          <span class="date-value">{{ offer.endDate | date:'MMMM d, y' }}</span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <section class="content-section" aria-labelledby="desc-heading">
+        <h2 id="desc-heading" class="section-heading">About this Internship</h2>
+        <p class="content-body">{{ offer.description }}</p>
+      </section>
+
+      @if (offer.requiredSkills) {
+        <section class="content-section" aria-labelledby="skills-heading">
+          <h2 id="skills-heading" class="section-heading">Required Skills</h2>
+          <p class="content-body">{{ offer.requiredSkills }}</p>
+        </section>
       }
-    </div>
+    </main>
+
+    <!-- ── Sidebar ────────────────────────────────────────── -->
+    <aside class="detail-sidebar" aria-label="Application panel">
+
+      @if (offer.status === 'ACTIVE') {
+
+        @if (!isLoggedIn) {
+          <div class="apply-card">
+            <div class="apply-card-header">
+              <mat-icon aria-hidden="true">login</mat-icon>
+              <h3>Apply for this role</h3>
+            </div>
+            <p class="apply-card-note">Sign in with your student account to submit an application.</p>
+            <a routerLink="/login" class="apply-btn full-width" aria-label="Log in to apply">
+              Log in to Apply
+            </a>
+            <p class="apply-card-footer">
+              Don't have an account?
+              <a routerLink="/register">Register here</a>
+            </p>
+          </div>
+        }
+
+        @else if (isStudent) {
+          <div class="apply-card">
+            @if (applied) {
+              <div class="applied-state">
+                <div class="applied-icon-wrap" aria-hidden="true">
+                  <mat-icon>check_circle</mat-icon>
+                </div>
+                <h3>Application Submitted!</h3>
+                <p>Your application has been sent to {{ offer.companyName }}. We'll notify you of any updates.</p>
+                <a routerLink="/student/applications" class="view-apps-link">View my applications</a>
+              </div>
+            } @else {
+              <div class="apply-card-header">
+                <mat-icon aria-hidden="true">send</mat-icon>
+                <h3>Apply Now</h3>
+              </div>
+              <p class="apply-card-note">Submit your application to {{ offer.companyName }}.</p>
+              <form [formGroup]="coverLetterForm" (ngSubmit)="apply()">
+                <div class="field-group">
+                  <label class="field-label" for="cover-letter">Cover Letter <span class="optional">(optional)</span></label>
+                  <textarea
+                    id="cover-letter"
+                    class="cover-textarea"
+                    formControlName="coverLetter"
+                    rows="6"
+                    placeholder="Tell the company why you're a great fit for this role..."
+                    aria-describedby="cover-letter-hint"
+                  ></textarea>
+                  <p id="cover-letter-hint" class="field-hint">A strong cover letter can set you apart from other applicants.</p>
+                </div>
+                <button type="submit" class="apply-btn full-width" [disabled]="applying" aria-label="Submit application">
+                  @if (applying) {
+                    <mat-spinner diameter="18" aria-hidden="true" />
+                    Submitting…
+                  } @else {
+                    <mat-icon aria-hidden="true">send</mat-icon>
+                    Submit Application
+                  }
+                </button>
+              </form>
+            }
+          </div>
+        }
+
+        @else {
+          <div class="apply-card apply-card--info">
+            <mat-icon aria-hidden="true">info_outline</mat-icon>
+            <p>Only students can apply for internship offers.</p>
+          </div>
+        }
+
+      } @else {
+        <div class="apply-card apply-card--closed">
+          <div class="apply-card-header">
+            <mat-icon aria-hidden="true">lock</mat-icon>
+            <h3>Applications Closed</h3>
+          </div>
+          <p class="apply-card-note">This offer is no longer accepting new applications.</p>
+        </div>
+      }
+
+      <!-- Company info -->
+      <div class="company-card">
+        <h3 class="company-card-heading">About the Company</h3>
+        <div class="company-card-body">
+          <div class="company-logo" aria-hidden="true">{{ offer.companyName.charAt(0) }}</div>
+          <div>
+            <p class="company-name">{{ offer.companyName }}</p>
+            <p class="company-sub">Internship Provider</p>
+          </div>
+        </div>
+      </div>
+
+    </aside>
   </div>
 }

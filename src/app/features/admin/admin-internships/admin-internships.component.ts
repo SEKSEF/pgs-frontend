@@ -3,13 +3,10 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { InternshipService } from '../../../core/services/internship.service';
 import { InternshipResponse, InternshipStatus } from '../../../core/models/internship.models';
 
@@ -17,10 +14,9 @@ import { InternshipResponse, InternshipStatus } from '../../../core/models/inter
   selector: 'app-admin-internships',
   standalone: true,
   imports: [
-    DatePipe, FormsModule,
-    MatTableModule, MatButtonModule, MatIconModule,
-    MatProgressSpinnerModule, MatTooltipModule,
-    MatSelectModule, MatFormFieldModule
+    DatePipe,
+    MatTableModule, MatIconModule,
+    MatProgressSpinnerModule, MatTooltipModule
   ],
   templateUrl: './admin-internships.component.html',
   styleUrl: './admin-internships.component.scss'

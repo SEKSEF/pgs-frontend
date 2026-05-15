@@ -3,7 +3,6 @@ import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -16,7 +15,7 @@ import { OfferResponse } from '../../../core/models/offer.models';
   standalone: true,
   imports: [
     RouterLink, DatePipe,
-    MatTableModule, MatButtonModule, MatIconModule,
+    MatTableModule, MatIconModule,
     MatProgressSpinnerModule, MatTooltipModule
   ],
   templateUrl: './company-offers.component.html',

@@ -1,34 +1,82 @@
-table {
-  width: 100%;
+// ── Table ────────────────────────────────────────────────────────
+.table-wrapper { width: 100%; overflow-x: auto; }
+table { width: 100%; }
+
+.offer-title-cell {
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  font-size: var(--text-base);
 }
 
-.subdomain {
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 500;
+.offer-domain-cell {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  margin-top: 2px;
 }
 
+.date-cell {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+// ── Action cell ──────────────────────────────────────────────────
 .actions-cell {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   white-space: nowrap;
-
-  a,
-  button {
-    color: #475569;
-
-    &:hover {
-      color: var(--primary);
-      background: var(--primary-soft);
-    }
-  }
 }
 
-.page-header a[mat-flat-button] {
-  height: 42px;
-  border-radius: 999px;
-  padding: 0 18px;
-  font-weight: 800;
+.action-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: background-color var(--duration-fast),
+              border-color var(--duration-fast),
+              color var(--duration-fast);
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  mat-spinner { flex-shrink: 0; }
+
+  &:hover:not([disabled]) {
+    background: var(--surface-subtle);
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+
+  &.danger:hover:not([disabled]) {
+    background: var(--color-danger-bg);
+    border-color: var(--color-danger-border);
+    color: var(--color-danger-text);
+  }
+
+  &[disabled] { opacity: 0.4; cursor: not-allowed; }
+}
+
+// ── "New Offer" button ────────────────────────────────────
+.new-offer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 38px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--brand-600);
+  color: #fff;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  transition: background-color var(--duration-fast), transform var(--duration-fast);
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+  &:hover { background: var(--brand-700); transform: translateY(-1px); }
 }

@@ -1,75 +1,108 @@
 <div class="page-header">
-  <h1>My Offers</h1>
-  <a mat-flat-button routerLink="/company/offers/new">
-    <mat-icon>add</mat-icon> New Offer
-  </a>
+  <div class="page-header-left">
+    <h1>My Offers</h1>
+    @if (!loading) {
+      <p class="page-count">{{ offers.length }} {{ offers.length === 1 ? 'offer' : 'offers' }}</p>
+    }
+  </div>
+  <div class="page-header-actions">
+    <a class="new-offer-btn" routerLink="/company/offers/new" aria-label="Post a new internship offer">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      New Offer
+    </a>
+  </div>
 </div>
 
 @if (loading) {
-  <div class="spinner-container"><mat-spinner /></div>
+  <div class="spinner-container" aria-label="Loading offers…">
+    <mat-spinner diameter="36" aria-hidden="true" />
+  </div>
 } @else if (error) {
-  <div class="error-banner">{{ error }}</div>
+  <div class="error-banner" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    {{ error }}
+  </div>
 } @else if (offers.length === 0) {
   <div class="empty-state">
-    <mat-icon>work_off</mat-icon>
-    <p>You haven't posted any offers yet</p>
-    <a mat-flat-button routerLink="/company/offers/new">Post your first offer</a>
+    <mat-icon aria-hidden="true">work_off</mat-icon>
+    <p class="empty-title">No offers yet</p>
+    <p class="empty-description">Post your first internship offer to start receiving applications.</p>
+    <a class="new-offer-btn" routerLink="/company/offers/new">Post your first offer</a>
   </div>
 } @else {
-  <table mat-table [dataSource]="offers" class="mat-elevation-z2">
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef>Title</th>
-      <td mat-cell *matCellDef="let o">
-        <strong>{{ o.title }}</strong>
-        @if (o.domain) { <div class="subdomain">{{ o.domain }}</div> }
-      </td>
-    </ng-container>
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="offers" aria-label="My internship offers">
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>Status</th>
-      <td mat-cell *matCellDef="let o">
-        <span [class]="'status-chip ' + o.status">{{ o.status }}</span>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Offer</th>
+        <td mat-cell *matCellDef="let o">
+          <div class="offer-title-cell">{{ o.title }}</div>
+          @if (o.domain) { <div class="offer-domain-cell">{{ o.domain }}</div> }
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="startDate">
-      <th mat-header-cell *matHeaderCellDef>Start</th>
-      <td mat-cell *matCellDef="let o">{{ o.startDate | date:'mediumDate' }}</td>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let o">
+          <span [class]="'status-chip ' + o.status" [attr.aria-label]="'Status: ' + o.status">
+            {{ o.status }}
+          </span>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="endDate">
-      <th mat-header-cell *matHeaderCellDef>End</th>
-      <td mat-cell *matCellDef="let o">{{ o.endDate | date:'mediumDate' }}</td>
-    </ng-container>
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef>Start</th>
+        <td mat-cell *matCellDef="let o" class="date-cell">{{ o.startDate | date:'MMM d, y' }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let o" class="actions-cell">
-        <a mat-icon-button [routerLink]="['/offers', o.id]" matTooltip="View public page">
-          <mat-icon>visibility</mat-icon>
-        </a>
-        <a mat-icon-button [routerLink]="['/company/applications', o.id]" matTooltip="View applications">
-          <mat-icon>assignment</mat-icon>
-        </a>
-        <a mat-icon-button [routerLink]="['/company/offers', o.id, 'edit']" matTooltip="Edit">
-          <mat-icon>edit</mat-icon>
-        </a>
-        @if (o.status === 'ACTIVE') {
-          <button mat-icon-button matTooltip="Close offer" (click)="close(o)"
-                  [disabled]="closing[o.id] || deleting[o.id]">
-            @if (closing[o.id]) { <mat-spinner diameter="18" /> }
-            @else { <mat-icon>lock</mat-icon> }
-          </button>
-        }
-        <button mat-icon-button color="warn" matTooltip="Delete" (click)="delete(o)"
-                [disabled]="closing[o.id] || deleting[o.id]">
-          @if (deleting[o.id]) { <mat-spinner diameter="18" /> }
-          @else { <mat-icon>delete</mat-icon> }
-        </button>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef>End</th>
+        <td mat-cell *matCellDef="let o" class="date-cell">{{ o.endDate | date:'MMM d, y' }}</td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columns"></tr>
-    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-  </table>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let o">
+          <div class="actions-cell">
+            <a class="action-icon-btn" [routerLink]="['/offers', o.id]"
+               matTooltip="View public page" matTooltipPosition="above"
+               aria-label="View public offer page">
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <a class="action-icon-btn" [routerLink]="['/company/applications', o.id]"
+               matTooltip="View applications" matTooltipPosition="above"
+               aria-label="View applications for this offer">
+              <mat-icon>assignment</mat-icon>
+            </a>
+            <a class="action-icon-btn" [routerLink]="['/company/offers', o.id, 'edit']"
+               matTooltip="Edit offer" matTooltipPosition="above"
+               aria-label="Edit offer">
+              <mat-icon>edit</mat-icon>
+            </a>
+            @if (o.status === 'ACTIVE') {
+              <button class="action-icon-btn"
+                      matTooltip="Close offer" matTooltipPosition="above"
+                      (click)="close(o)"
+                      [disabled]="closing[o.id] || deleting[o.id]"
+                      aria-label="Close offer — stop accepting applications">
+                @if (closing[o.id]) { <mat-spinner diameter="14" /> }
+                @else { <mat-icon>lock</mat-icon> }
+              </button>
+            }
+            <button class="action-icon-btn danger"
+                    matTooltip="Delete offer" matTooltipPosition="above"
+                    (click)="delete(o)"
+                    [disabled]="closing[o.id] || deleting[o.id]"
+                    aria-label="Delete offer">
+              @if (deleting[o.id]) { <mat-spinner diameter="14" /> }
+              @else { <mat-icon>delete</mat-icon> }
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+    </table>
+  </div>
 }

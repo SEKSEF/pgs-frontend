@@ -3,14 +3,9 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, SlicePipe } from '@angular/common';
 import { finalize, Observable, Subscription } from 'rxjs';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatRippleModule } from '@angular/material/core';
 import { OfferService } from '../../../core/services/offer.service';
 import { OfferResponse } from '../../../core/models/offer.models';
 
@@ -19,8 +14,7 @@ import { OfferResponse } from '../../../core/models/offer.models';
   standalone: true,
   imports: [
     RouterLink, FormsModule, DatePipe, SlicePipe,
-    MatCardModule, MatButtonModule, MatChipsModule,
-    MatIconModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule, MatTooltipModule
+    MatIconModule, MatTooltipModule, MatRippleModule
   ],
   templateUrl: './offer-list.component.html',
   styleUrl: './offer-list.component.scss'

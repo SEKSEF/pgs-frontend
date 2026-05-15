@@ -2,16 +2,10 @@ import { Component, inject, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize, forkJoin } from 'rxjs';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { ApplicationService } from '../../../core/services/application.service';
 import { InternshipService } from '../../../core/services/internship.service';
 import { AdminService } from '../../../core/services/admin.service';
@@ -23,9 +17,7 @@ import { UserResponse } from '../../../core/models/auth.models';
   standalone: true,
   imports: [
     DatePipe, FormsModule,
-    MatTableModule, MatButtonModule, MatIconModule,
-    MatProgressSpinnerModule, MatTooltipModule, MatExpansionModule,
-    MatSelectModule, MatFormFieldModule, MatInputModule
+    MatIconModule, MatProgressSpinnerModule, MatExpansionModule
   ],
   templateUrl: './admin-applications.component.html',
   styleUrl: './admin-applications.component.scss'

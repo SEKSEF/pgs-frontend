@@ -1,78 +1,133 @@
 <div class="page-header">
-  <h1>Internship Offers</h1>
-  <div class="header-actions">
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Search offers</mat-label>
-      <input matInput [(ngModel)]="searchQuery" (input)="filter()" placeholder="Title, company, domain..." />
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
-    <button mat-icon-button (click)="refreshOffers()" [disabled]="loading" matTooltip="Refresh offers">
-      <mat-icon>refresh</mat-icon>
+  <div class="page-header-left">
+    <h1>Internship Offers</h1>
+    @if (!loading && filtered.length > 0) {
+      <p class="page-count">{{ filtered.length }} {{ filtered.length === 1 ? 'offer' : 'offers' }} available</p>
+    }
+  </div>
+  <div class="page-header-actions">
+    <div class="search-wrapper">
+      <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
+      <input
+        class="search-input"
+        type="search"
+        [(ngModel)]="searchQuery"
+        (input)="filter()"
+        placeholder="Title, company, domain…"
+        aria-label="Search offers" />
+      @if (searchQuery) {
+        <button class="search-clear" type="button" (click)="searchQuery=''; filter()" aria-label="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+    <button
+      class="icon-action-btn"
+      type="button"
+      (click)="refreshOffers()"
+      [disabled]="loading"
+      aria-label="Refresh offers"
+      matTooltip="Refresh"
+      matRipple>
+      <mat-icon [class.spinning]="loading">refresh</mat-icon>
     </button>
   </div>
 </div>
 
 @if (loading) {
+  <!-- Skeleton grid -->
   <div class="skeleton-grid">
     @for (_ of skeletonCards; track $index) {
       <div class="skeleton-card">
-        <div class="skeleton-line wide"></div>
-        <div class="skeleton-line medium"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line short"></div>
+        <div class="skeleton-text-heading"></div>
+        <div class="skeleton-text-medium"></div>
+        <div style="display:flex;gap:8px;margin:12px 0">
+          <div class="skeleton" style="height:22px;width:70px;border-radius:9999px"></div>
+          <div class="skeleton" style="height:22px;width:80px;border-radius:9999px"></div>
+        </div>
+        <div class="skeleton-text"></div>
+        <div class="skeleton-text"></div>
+        <div class="skeleton-text-short" style="margin-top:auto"></div>
       </div>
     }
   </div>
+
 } @else if (error) {
-  <div class="error-banner">{{ error }}</div>
+  <div class="error-banner" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    {{ error }}
+  </div>
+
 } @else if (filtered.length === 0) {
   <div class="empty-state">
-    <mat-icon>work_off</mat-icon>
-    <p>No offers found</p>
+    <mat-icon aria-hidden="true">{{ searchQuery ? 'search_off' : 'work_off' }}</mat-icon>
+    <p class="empty-title">{{ searchQuery ? 'No results found' : 'No offers available' }}</p>
+    <p class="empty-description">
+      {{ searchQuery ? 'Try different keywords or clear the search.' : 'Check back later for new internship opportunities.' }}
+    </p>
+    @if (searchQuery) {
+      <button class="clear-search-btn" type="button" (click)="searchQuery=''; filter()">
+        Clear search
+      </button>
+    }
   </div>
+
 } @else {
-  <div class="count-label">{{ filtered.length }} offer{{ filtered.length !== 1 ? 's' : '' }} available</div>
   <div class="offers-grid">
     @for (offer of filtered; track offer.id) {
-      <mat-card class="offer-card" appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>{{ offer.title }}</mat-card-title>
-          <mat-card-subtitle>
-            <mat-icon inline>business</mat-icon> {{ offer.companyName }}
-          </mat-card-subtitle>
-        </mat-card-header>
-
-        <mat-card-content>
-          <mat-chip-set aria-label="Offer details">
-            @if (offer.domain) {
-              <mat-chip>{{ offer.domain }}</mat-chip>
-            }
-            @if (offer.location) {
-              <mat-chip>
-                <mat-icon matChipAvatar>location_on</mat-icon>
-                {{ offer.location }}
-              </mat-chip>
-            }
-            @if (offer.durationMonths) {
-              <mat-chip>{{ offer.durationMonths }} months</mat-chip>
-            }
-          </mat-chip-set>
-
-          <p class="description">{{ offer.description | slice:0:180 }}{{ offer.description.length > 180 ? '...' : '' }}</p>
-
-          <div class="dates">
-            <mat-icon>event</mat-icon>
-            {{ offer.startDate | date:'mediumDate' }} – {{ offer.endDate | date:'mediumDate' }}
+      <a class="offer-card" [routerLink]="['/offers', offer.id]" aria-label="{{ offer.title }} at {{ offer.companyName }}">
+        <!-- Card header -->
+        <div class="offer-card-header">
+          <div class="offer-company-avatar" aria-hidden="true">
+            {{ offer.companyName[0] }}
           </div>
-        </mat-card-content>
+          <div class="offer-meta">
+            <h2 class="offer-title">{{ offer.title }}</h2>
+            <p class="offer-company">{{ offer.companyName }}</p>
+          </div>
+          <span [class]="'status-chip ' + offer.status" aria-label="Status: {{ offer.status }}">
+            {{ offer.status }}
+          </span>
+        </div>
 
-        <mat-card-actions>
-          <button mat-button color="primary" [routerLink]="['/offers', offer.id]">
-            View Details <mat-icon>arrow_forward</mat-icon>
-          </button>
-        </mat-card-actions>
-      </mat-card>
+        <!-- Tags -->
+        <div class="offer-tags" aria-label="Offer details">
+          @if (offer.domain) {
+            <span class="offer-tag">
+              <mat-icon aria-hidden="true">label_outline</mat-icon>
+              {{ offer.domain }}
+            </span>
+          }
+          @if (offer.location) {
+            <span class="offer-tag">
+              <mat-icon aria-hidden="true">location_on</mat-icon>
+              {{ offer.location }}
+            </span>
+          }
+          @if (offer.durationMonths) {
+            <span class="offer-tag">
+              <mat-icon aria-hidden="true">schedule</mat-icon>
+              {{ offer.durationMonths }}mo
+            </span>
+          }
+        </div>
+
+        <!-- Description -->
+        <p class="offer-description">
+          {{ offer.description | slice:0:160 }}{{ offer.description.length > 160 ? '…' : '' }}
+        </p>
+
+        <!-- Footer -->
+        <div class="offer-footer">
+          <span class="offer-dates">
+            <mat-icon aria-hidden="true">calendar_today</mat-icon>
+            {{ offer.startDate | date:'MMM d, y' }} – {{ offer.endDate | date:'MMM d, y' }}
+          </span>
+          <span class="offer-cta" aria-hidden="true">
+            View <mat-icon>arrow_forward</mat-icon>
+          </span>
+        </div>
+      </a>
     }
   </div>
 }

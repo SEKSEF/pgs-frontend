@@ -1,45 +1,88 @@
 <div class="page-header">
-  <h1>My Applications</h1>
-  <a mat-button routerLink="/offers">Browse Offers</a>
+  <div class="page-header-left">
+    <h1>My Applications</h1>
+    @if (!loading) {
+      <p class="page-count">{{ applications.length }} {{ applications.length === 1 ? 'application' : 'applications' }}</p>
+    }
+  </div>
+  <div class="page-header-actions">
+    <a class="header-action-btn" routerLink="/offers" aria-label="Browse internship offers">
+      <mat-icon aria-hidden="true">search</mat-icon>
+      Browse Offers
+    </a>
+  </div>
 </div>
 
 @if (loading) {
-  <div class="spinner-container"><mat-spinner /></div>
+  <div class="list-skeleton" aria-label="Loading applications…">
+    @for (_ of [1,2,3]; track $index) {
+      <div class="skeleton-item">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1">
+            <div class="skeleton skeleton-text-medium"></div>
+            <div class="skeleton skeleton-text-short" style="margin-top:6px"></div>
+          </div>
+          <div class="skeleton" style="width:72px;height:22px;border-radius:var(--radius-full)"></div>
+        </div>
+        <div class="skeleton skeleton-text-short" style="margin-top:var(--space-3)"></div>
+      </div>
+    }
+  </div>
 } @else if (error) {
-  <div class="error-banner">{{ error }}</div>
+  <div class="error-banner" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    {{ error }}
+  </div>
 } @else if (applications.length === 0) {
   <div class="empty-state">
-    <mat-icon>assignment</mat-icon>
-    <p>You haven't applied to any offers yet</p>
-    <a mat-flat-button routerLink="/offers">Browse Offers</a>
+    <mat-icon aria-hidden="true">assignment</mat-icon>
+    <p class="empty-title">No applications yet</p>
+    <p class="empty-description">Start exploring internship offers and submit your first application.</p>
+    <a class="empty-action-btn" routerLink="/offers">Browse Offers</a>
   </div>
 } @else {
-  <div class="applications-list">
+  <div class="item-list">
     @for (app of applications; track app.id) {
-      <mat-card class="app-card" appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>{{ app.offerTitle }}</mat-card-title>
-          <mat-card-subtitle>{{ app.companyName }}</mat-card-subtitle>
-          <div class="status-area">
-            <span [class]="'status-chip ' + app.status">{{ app.status }}</span>
+      <div class="item-card">
+        <div class="item-card-main">
+          <div class="item-card-header">
+            <div class="item-card-title-group">
+              <div class="company-avatar" aria-hidden="true">{{ app.companyName.charAt(0) }}</div>
+              <div>
+                <p class="item-title">{{ app.offerTitle }}</p>
+                <p class="item-subtitle">{{ app.companyName }}</p>
+              </div>
+            </div>
+            <span [class]="'status-chip ' + app.status" [attr.aria-label]="'Status: ' + app.status">
+              {{ app.status }}
+            </span>
           </div>
-        </mat-card-header>
-        <mat-card-content>
-          <p class="date">Applied on {{ app.appliedAt | date:'mediumDate' }}</p>
+
+          <div class="item-meta">
+            <span class="meta-item">
+              <mat-icon aria-hidden="true">calendar_today</mat-icon>
+              Applied {{ app.appliedAt | date:'MMMM d, y' }}
+            </span>
+          </div>
+
           @if (app.adminNotes) {
-            <div class="notes">
-              <mat-icon>info</mat-icon>
+            <div class="notes-banner" role="note">
+              <mat-icon aria-hidden="true">info_outline</mat-icon>
               <span>{{ app.adminNotes }}</span>
             </div>
           }
+
           @if (app.coverLetter) {
-            <p class="cover-letter-preview">{{ app.coverLetter }}</p>
+            <p class="cover-preview">{{ app.coverLetter | slice:0:200 }}{{ app.coverLetter.length > 200 ? '…' : '' }}</p>
           }
-        </mat-card-content>
-        <mat-card-actions>
-          <a mat-button [routerLink]="['/offers', app.offerId]">View Offer</a>
-        </mat-card-actions>
-      </mat-card>
+        </div>
+
+        <div class="item-card-footer">
+          <a class="view-link" [routerLink]="['/offers', app.offerId]" aria-label="View the offer for {{ app.offerTitle }}">
+            View Offer <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
     }
   </div>
 }

@@ -1,65 +1,120 @@
 <div class="page-header">
-  <h1>Supervised Internships</h1>
+  <div class="page-header-left">
+    <h1>Supervised Internships</h1>
+    @if (!loading) {
+      <p class="page-count">{{ internships.length }} {{ internships.length === 1 ? 'internship' : 'internships' }}</p>
+    }
+  </div>
 </div>
 
 @if (loading) {
-  <div class="spinner-container"><mat-spinner /></div>
+  <div class="list-skeleton" aria-label="Loading internships…">
+    @for (_ of [1,2]; track $index) {
+      <div class="skeleton-item">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1">
+            <div class="skeleton skeleton-text-medium"></div>
+            <div class="skeleton skeleton-text-short" style="margin-top:6px"></div>
+          </div>
+          <div class="skeleton" style="width:80px;height:22px;border-radius:var(--radius-full)"></div>
+        </div>
+      </div>
+    }
+  </div>
 } @else if (error) {
-  <div class="error-banner">{{ error }}</div>
+  <div class="error-banner" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    {{ error }}
+  </div>
 } @else if (internships.length === 0) {
   <div class="empty-state">
-    <mat-icon>supervisor_account</mat-icon>
-    <p>No internships assigned to you yet</p>
+    <mat-icon aria-hidden="true">supervisor_account</mat-icon>
+    <p class="empty-title">No internships assigned</p>
+    <p class="empty-description">Internships assigned to you by an admin will appear here.</p>
   </div>
 } @else {
-  <div class="internships-list">
+  <div class="item-list">
     @for (i of internships; track i.id) {
-      <mat-card appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>{{ i.studentName }}</mat-card-title>
-          <mat-card-subtitle>{{ i.offerTitle }} @ {{ i.companyName }}</mat-card-subtitle>
-          <div class="status-badge">
-            <span [class]="'status-chip ' + i.status">{{ i.status }}</span>
-          </div>
-        </mat-card-header>
+      <div class="item-card">
 
-        <mat-card-content>
-          <div class="info-row">
-            <span><mat-icon>email</mat-icon> {{ i.studentEmail }}</span>
-            @if (i.startDate) {
-              <span><mat-icon>event</mat-icon> {{ i.startDate | date:'mediumDate' }}
-                @if (i.endDate) { – {{ i.endDate | date:'mediumDate' }} }
-              </span>
-            }
-          </div>
-
-          <mat-divider />
-
-          @if (i.status === 'ONGOING') {
-            <div class="status-controls">
-              <button mat-stroked-button color="primary" (click)="updateStatus(i, 'COMPLETED')"
-                      [disabled]="updatingStatus[i.id]">
-                <mat-icon>check_circle</mat-icon> Mark Completed
-              </button>
-              <button mat-stroked-button color="warn" (click)="updateStatus(i, 'INTERRUPTED')"
-                      [disabled]="updatingStatus[i.id]">
-                <mat-icon>cancel</mat-icon> Mark Interrupted
-              </button>
+        <!-- Header -->
+        <div class="item-card-header">
+          <div class="student-cell">
+            <div class="student-avatar" aria-hidden="true">{{ i.studentName.charAt(0) }}</div>
+            <div>
+              <p class="student-name">{{ i.studentName }}</p>
+              <p class="student-meta">{{ i.offerTitle }} · {{ i.companyName }}</p>
             </div>
-          }
+          </div>
+          <span [class]="'status-chip ' + i.status" [attr.aria-label]="'Status: ' + i.status">
+            {{ i.status }}
+          </span>
+        </div>
 
-          <div class="notes-section">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Supervisor Notes</mat-label>
-              <textarea matInput [(ngModel)]="editingNotes[i.id]" rows="4"
-                        placeholder="Add notes about this internship..."></textarea>
-            </mat-form-field>
-            <button mat-flat-button (click)="saveNotes(i)" [disabled]="savingNotes[i.id]">
-              @if (savingNotes[i.id]) { <mat-spinner diameter="18" /> } @else { Save Notes }
+        <!-- Meta -->
+        <div class="item-meta">
+          <span class="meta-item">
+            <mat-icon aria-hidden="true">email</mat-icon>
+            {{ i.studentEmail }}
+          </span>
+          @if (i.startDate) {
+            <span class="meta-item">
+              <mat-icon aria-hidden="true">event</mat-icon>
+              {{ i.startDate | date:'MMM d, y' }}{{ i.endDate ? ' – ' + (i.endDate | date:'MMM d, y') : '' }}
+            </span>
+          }
+        </div>
+
+        <!-- Status controls -->
+        @if (i.status === 'ONGOING') {
+          <div class="status-controls" role="group" [attr.aria-label]="'Actions for ' + i.studentName">
+            <button class="decision-btn complete-btn"
+                    (click)="updateStatus(i, 'COMPLETED')"
+                    [disabled]="updatingStatus[i.id]"
+                    aria-label="Mark internship as completed">
+              @if (updatingStatus[i.id]) { <mat-spinner diameter="16" /> }
+              @else { <mat-icon aria-hidden="true">check_circle</mat-icon> }
+              Mark Completed
+            </button>
+            <button class="decision-btn interrupt-btn"
+                    (click)="updateStatus(i, 'INTERRUPTED')"
+                    [disabled]="updatingStatus[i.id]"
+                    aria-label="Mark internship as interrupted">
+              @if (updatingStatus[i.id]) { <mat-spinner diameter="16" /> }
+              @else { <mat-icon aria-hidden="true">cancel</mat-icon> }
+              Mark Interrupted
             </button>
           </div>
-        </mat-card-content>
-      </mat-card>
+        }
+
+        <!-- Notes -->
+        <div class="notes-section">
+          <label class="notes-label" [for]="'notes-' + i.id">Supervisor Notes</label>
+          <textarea
+            [id]="'notes-' + i.id"
+            class="notes-textarea"
+            [(ngModel)]="editingNotes[i.id]"
+            rows="4"
+            placeholder="Add observations, progress notes, or feedback about this internship…"
+            [attr.aria-label]="'Notes for ' + i.studentName"
+          ></textarea>
+          <div class="notes-actions">
+            <button class="save-notes-btn"
+                    (click)="saveNotes(i)"
+                    [disabled]="savingNotes[i.id]"
+                    aria-label="Save supervisor notes">
+              @if (savingNotes[i.id]) {
+                <mat-spinner diameter="16" aria-hidden="true" />
+                Saving…
+              } @else {
+                <mat-icon aria-hidden="true">save</mat-icon>
+                Save Notes
+              }
+            </button>
+          </div>
+        </div>
+
+      </div>
     }
   </div>
 }

@@ -3,15 +3,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDividerModule } from '@angular/material/divider';
 import { OfferService } from '../../../core/services/offer.service';
 import { ApplicationService } from '../../../core/services/application.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -22,9 +16,7 @@ import { OfferResponse } from '../../../core/models/offer.models';
   standalone: true,
   imports: [
     RouterLink, DatePipe, ReactiveFormsModule,
-    MatCardModule, MatButtonModule, MatChipsModule,
-    MatIconModule, MatProgressSpinnerModule,
-    MatFormFieldModule, MatInputModule, MatDividerModule
+    MatIconModule, MatProgressSpinnerModule
   ],
   templateUrl: './offer-detail.component.html',
   styleUrl: './offer-detail.component.scss'

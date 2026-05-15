@@ -3,25 +3,21 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { UserResponse } from '../../../core/models/auth.models';
-import { Role } from '../../../core/models/auth.models';
+import { UserResponse, Role } from '../../../core/models/auth.models';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
   imports: [
     DatePipe, FormsModule,
-    MatTableModule, MatButtonModule, MatIconModule,
-    MatProgressSpinnerModule, MatSelectModule, MatFormFieldModule, MatTooltipModule
+    MatTableModule, MatIconModule,
+    MatProgressSpinnerModule, MatTooltipModule
   ],
   templateUrl: './admin-users.component.html',
   styleUrl: './admin-users.component.scss'
@@ -38,6 +34,14 @@ export class AdminUsersComponent implements OnInit {
   selectedRole: Role | '' = '';
   updating: Record<number, boolean> = {};
   columns = ['name', 'email', 'role', 'status', 'createdAt', 'actions'];
+
+  readonly roleOptions: Array<{ value: Role | ''; label: string }> = [
+    { value: '',           label: 'All' },
+    { value: 'STUDENT',    label: 'Students' },
+    { value: 'COMPANY',    label: 'Companies' },
+    { value: 'SUPERVISOR', label: 'Supervisors' },
+    { value: 'ADMIN',      label: 'Admins' }
+  ];
 
   get currentUserId(): number | undefined {
     return this.auth.getUser()?.userId;

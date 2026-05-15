@@ -1,16 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatInputModule } from '@angular/material/input';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ApplicationService } from '../../../core/services/application.service';
 import { ApplicationResponse, ApplicationStatus } from '../../../core/models/application.models';
@@ -19,9 +13,8 @@ import { ApplicationResponse, ApplicationStatus } from '../../../core/models/app
   selector: 'app-company-applications',
   standalone: true,
   imports: [
-    DatePipe, FormsModule,
-    MatTableModule, MatButtonModule, MatIconModule, MatSelectModule,
-    MatFormFieldModule, MatProgressSpinnerModule, MatInputModule, MatExpansionModule
+    RouterLink, DatePipe,
+    MatIconModule, MatProgressSpinnerModule, MatExpansionModule
   ],
   templateUrl: './company-applications.component.html',
   styleUrl: './company-applications.component.scss'

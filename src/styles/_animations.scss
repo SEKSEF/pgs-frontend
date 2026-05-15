@@ -1,0 +1,134 @@
+// ================================================================
+// ANIMATIONS — PGS Platform
+// Keyframes, animation utilities, and transition helpers
+// ================================================================
+
+// ── Keyframes ────────────────────────────────────────────────────
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-scale {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(1);    opacity: 1; }
+  100% { transform: scale(1.5);  opacity: 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Animation Utility Classes ────────────────────────────────────
+
+.animate-fade-in       { animation: fade-in       var(--duration-slow) var(--ease-out) both; }
+.animate-fade-in-up    { animation: fade-in-up    var(--duration-slow) var(--ease-out) both; }
+.animate-fade-in-down  { animation: fade-in-down  var(--duration-slow) var(--ease-out) both; }
+.animate-fade-in-scale { animation: fade-in-scale var(--duration-slow) var(--ease-out) both; }
+.animate-slide-left    { animation: slide-in-left var(--duration-slow) var(--ease-out) both; }
+
+// Stagger children (apply to parent, children get delay via nth-child)
+.stagger-children > * {
+  animation: fade-in-up var(--duration-slow) var(--ease-out) both;
+
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 50}ms; }
+  }
+}
+
+// ── Skeleton Loading ─────────────────────────────────────────────
+
+.skeleton {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--neutral-100) 25%,
+    var(--neutral-50)  50%,
+    var(--neutral-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s var(--ease-in-out) infinite;
+}
+
+.skeleton-text {
+  @extend .skeleton;
+  height: 12px;
+  width: 100%;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-text-wide    { @extend .skeleton-text; width: 80%; }
+.skeleton-text-medium  { @extend .skeleton-text; width: 60%; }
+.skeleton-text-short   { @extend .skeleton-text; width: 35%; }
+.skeleton-text-heading { @extend .skeleton; height: 18px; width: 55%; margin-bottom: var(--space-3); border-radius: var(--radius-full); }
+
+.skeleton-avatar {
+  @extend .skeleton;
+  border-radius: var(--radius-full);
+}
+
+.skeleton-card {
+  padding: var(--space-5);
+  background: var(--surface-base);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-5);
+}
+
+// ── Transition Presets ───────────────────────────────────────────
+
+.transition-all     { transition: all var(--duration-normal) var(--ease-in-out); }
+.transition-colors  { transition: color var(--duration-fast) var(--ease-in-out),
+                                  background-color var(--duration-fast) var(--ease-in-out),
+                                  border-color var(--duration-fast) var(--ease-in-out); }
+.transition-opacity { transition: opacity var(--duration-normal) var(--ease-in-out); }
+.transition-shadow  { transition: box-shadow var(--duration-normal) var(--ease-in-out); }
+.transition-transform { transition: transform var(--duration-normal) var(--ease-out); }
+
+// ── Hover lift ───────────────────────────────────────────────────
+.hover-lift {
+  transition: transform var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+}

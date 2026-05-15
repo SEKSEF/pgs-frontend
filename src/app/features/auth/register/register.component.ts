@@ -49,6 +49,12 @@ export class RegisterComponent {
   error = '';
   hidePassword = true;
 
+  readonly roleOptions = [
+    { value: 'STUDENT',    label: 'Student',    icon: 'person',             description: 'Find and apply to internships' },
+    { value: 'COMPANY',    label: 'Company',    icon: 'business',           description: 'Post offers and hire interns'  },
+    { value: 'SUPERVISOR', label: 'Supervisor', icon: 'supervisor_account', description: 'Oversee and mentor interns'    }
+  ];
+
   get role() { return this.form.get('role')?.value; }
 
   submit() {

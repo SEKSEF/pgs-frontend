@@ -1,79 +1,175 @@
 <div class="page-header">
-  <div>
-    <p class="eyebrow">Overview</p>
-    <h1>Admin Dashboard</h1>
+  <div class="page-header-left">
+    <p class="page-eyebrow">Administration</p>
+    <h1>Dashboard</h1>
   </div>
 </div>
 
 @if (loading) {
-  <div class="spinner-container"><mat-spinner /></div>
-} @else if (error) {
-  <div class="error-banner">{{ error }}</div>
-} @else if (stats) {
+  <!-- Skeleton -->
   <div class="stats-grid">
-    <mat-card class="stat-card users">
-      <mat-card-content>
-        <div class="stat-top">
+    @for (_ of [1,2,3,4]; track $index) {
+      <div class="skeleton-card">
+        <div class="skeleton-card-top">
           <div>
-            <div class="stat-label">Total Users</div>
-            <div class="stat-value">{{ stats.totalUsers }}</div>
+            <div class="skeleton-text-short" style="width:80px; margin-bottom:16px"></div>
+            <div class="skeleton-text-heading" style="width:60px"></div>
           </div>
-          <div class="icon-badge"><mat-icon>groups</mat-icon></div>
+          <div class="skeleton-avatar" style="width:44px;height:44px;border-radius:12px"></div>
         </div>
-        <div class="breakdown">
-          <span>{{ stats.totalStudents }} students</span>
-          <span>{{ stats.totalCompanies }} companies</span>
-          <span>{{ stats.totalSupervisors }} supervisors</span>
-        </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="skeleton-text-short" style="width:120px;margin-top:20px"></div>
+      </div>
+    }
+  </div>
+} @else if (error) {
+  <div class="error-banner" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    {{ error }}
+  </div>
+} @else if (stats) {
 
-    <mat-card class="stat-card offers">
-      <mat-card-content>
-        <div class="stat-top">
-          <div>
-            <div class="stat-label">Total Offers</div>
-            <div class="stat-value">{{ stats.totalOffers }}</div>
-          </div>
-          <div class="icon-badge"><mat-icon>work</mat-icon></div>
-        </div>
-        <div class="breakdown">
-          <span>{{ stats.activeOffers }} active</span>
-        </div>
-      </mat-card-content>
-    </mat-card>
+  <!-- ── KPI grid ──────────────────────────────────────────── -->
+  <div class="stats-grid stagger-children">
 
-    <mat-card class="stat-card applications">
-      <mat-card-content>
-        <div class="stat-top">
-          <div>
-            <div class="stat-label">Applications</div>
-            <div class="stat-value">{{ stats.totalApplications }}</div>
-          </div>
-          <div class="icon-badge"><mat-icon>assignment</mat-icon></div>
+    <!-- Users -->
+    <div class="stat-card" tabindex="0">
+      <div class="stat-header">
+        <div class="stat-meta">
+          <span class="stat-label">Total Users</span>
+          <span class="stat-value">{{ stats.totalUsers }}</span>
         </div>
-        <div class="breakdown">
-          <span class="pending">{{ stats.pendingApplications }} pending</span>
-          <span class="accepted">{{ stats.acceptedApplications }} accepted</span>
-          <span class="rejected">{{ stats.rejectedApplications }} rejected</span>
+        <div class="stat-icon users" aria-hidden="true">
+          <mat-icon>group</mat-icon>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+      <div class="stat-breakdown">
+        <div class="breakdown-item">
+          <span class="breakdown-dot students"></span>
+          <span class="breakdown-text">{{ stats.totalStudents }} students</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-dot companies"></span>
+          <span class="breakdown-text">{{ stats.totalCompanies }} companies</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-dot supervisors"></span>
+          <span class="breakdown-text">{{ stats.totalSupervisors }} supervisors</span>
+        </div>
+      </div>
+    </div>
 
-    <mat-card class="stat-card internships">
-      <mat-card-content>
-        <div class="stat-top">
-          <div>
-            <div class="stat-label">Internships</div>
-            <div class="stat-value">{{ stats.totalInternships }}</div>
-          </div>
-          <div class="icon-badge"><mat-icon>business_center</mat-icon></div>
+    <!-- Offers -->
+    <div class="stat-card" tabindex="0">
+      <div class="stat-header">
+        <div class="stat-meta">
+          <span class="stat-label">Internship Offers</span>
+          <span class="stat-value">{{ stats.totalOffers }}</span>
         </div>
-        <div class="breakdown">
-          <span class="ongoing">{{ stats.ongoingInternships }} ongoing</span>
-          <span class="completed">{{ stats.completedInternships }} completed</span>
+        <div class="stat-icon offers" aria-hidden="true">
+          <mat-icon>work_outline</mat-icon>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+      <div class="stat-breakdown">
+        <div class="breakdown-item">
+          <span class="breakdown-dot active"></span>
+          <span class="breakdown-text">{{ stats.activeOffers }} active</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-dot closed"></span>
+          <span class="breakdown-text">{{ stats.totalOffers - stats.activeOffers }} closed</span>
+        </div>
+      </div>
+      <div class="stat-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="stats.totalOffers ? (stats.activeOffers / stats.totalOffers * 100) : 0"></div>
+        </div>
+        <span class="progress-label">
+          {{ stats.totalOffers ? ((stats.activeOffers / stats.totalOffers * 100) | number:'1.0-0') : 0 }}% active
+        </span>
+      </div>
+    </div>
+
+    <!-- Applications -->
+    <div class="stat-card" tabindex="0">
+      <div class="stat-header">
+        <div class="stat-meta">
+          <span class="stat-label">Applications</span>
+          <span class="stat-value">{{ stats.totalApplications }}</span>
+        </div>
+        <div class="stat-icon applications" aria-hidden="true">
+          <mat-icon>assignment</mat-icon>
+        </div>
+      </div>
+      <div class="stat-breakdown">
+        <div class="breakdown-item">
+          <span class="breakdown-dot pending"></span>
+          <span class="breakdown-text">{{ stats.pendingApplications }} pending</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-dot accepted"></span>
+          <span class="breakdown-text">{{ stats.acceptedApplications }} accepted</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-dot rejected"></span>
+          <span class="breakdown-text">{{ stats.rejectedApplications }} rejected</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Internships -->
+    <div class="stat-card" tabindex="0">
+      <div class="stat-header">
+        <div class="stat-meta">
+          <span class="stat-label">Internships</span>
+          <span class="stat-value">{{ stats.totalInternships }}</span>
+        </div>
+        <div class="stat-icon internships" aria-hidden="true">
+          <mat-icon>business_center</mat-icon>
+        </div>
+      </div>
+      <div class="stat-breakdown">
+        <div class="breakdown-item">
+          <span class="breakdown-dot ongoing"></span>
+          <span class="breakdown-text">{{ stats.ongoingInternships }} ongoing</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-dot completed"></span>
+          <span class="breakdown-text">{{ stats.completedInternships }} completed</span>
+        </div>
+      </div>
+      <div class="stat-progress">
+        <div class="progress-bar internship-bar">
+          <div class="progress-fill completed-fill" [style.width.%]="stats.totalInternships ? (stats.completedInternships / stats.totalInternships * 100) : 0"></div>
+        </div>
+        <span class="progress-label">
+          {{ stats.totalInternships ? ((stats.completedInternships / stats.totalInternships * 100) | number:'1.0-0') : 0 }}% completed
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Quick actions ─────────────────────────────────────── -->
+  <div class="quick-nav">
+    <p class="quick-nav-label">Quick Navigation</p>
+    <div class="quick-nav-grid">
+      <a class="quick-nav-card" routerLink="/admin/users">
+        <mat-icon aria-hidden="true">people</mat-icon>
+        <span>Manage Users</span>
+        <mat-icon class="arrow" aria-hidden="true">arrow_forward</mat-icon>
+      </a>
+      <a class="quick-nav-card" routerLink="/admin/applications">
+        <mat-icon aria-hidden="true">description</mat-icon>
+        <span>Review Applications</span>
+        @if (stats.pendingApplications > 0) {
+          <span class="nav-badge" aria-label="{{ stats.pendingApplications }} pending">{{ stats.pendingApplications }}</span>
+        }
+        <mat-icon class="arrow" aria-hidden="true">arrow_forward</mat-icon>
+      </a>
+      <a class="quick-nav-card" routerLink="/admin/internships">
+        <mat-icon aria-hidden="true">business_center</mat-icon>
+        <span>View Internships</span>
+        <mat-icon class="arrow" aria-hidden="true">arrow_forward</mat-icon>
+      </a>
+    </div>
   </div>
 }
